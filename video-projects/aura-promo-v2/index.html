@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AURA Serum - Gold & Merriweather Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --rosegold: #b76e79;
+      --gold: #d4af37;
+      --gold-light: #f9f295;
+      --lux-dark: #0a0808;
+    }
+    
+    body, html {
+      margin: 0; padding: 0;
+      width: 1080px; height: 1920px;
+      background-color: var(--lux-dark);
+      overflow: hidden;
+      font-family: 'Merriweather', serif;
+    }
+
+    .stage {
+      position: absolute; inset: 0;
+      width: 1080px; height: 1920px;
+      background: var(--lux-dark);
+    }
+
+    /* BACKGROUND WRAPPERS */
+    .bg-wrapper {
+      position: absolute; inset: -150px;
+      width: calc(100% + 300px); height: calc(100% + 300px);
+      z-index: 10;
+      opacity: 0;
+      will-change: transform, opacity, filter;
+    }
+
+    .bg-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* INFLUENCER PICTURE-IN-PICTURE SUPERPOSICION */
+    .influencer-pip-container {
+      position: absolute;
+      width: 800px; height: 1000px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      border-radius: 40px;
+      overflow: hidden;
+      z-index: 40; 
+      opacity: 0;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.9), 0 0 0 2px rgba(212,175,55,0.3); /* Marco dorado tenue */
+      will-change: transform, opacity;
+    }
+    .influencer-pip-container video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* LIGHTING & OVERLAYS */
+    .vignette-lux {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 15%, rgba(0,0,0,0.9) 100%);
+      z-index: 20;
+    }
+
+    .whip-streak {
+      position: absolute; top: 50%; left: 0;
+      width: 1500px; height: 30px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      filter: blur(30px);
+      transform: translateY(-50%) translateX(-2000px);
+      z-index: 90;
+      will-change: transform;
+    }
+
+    /* TEXT CONTAINERS */
+    .text-layer {
+      position: absolute; inset: 0;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 50; pointer-events: none;
+    }
+
+    /* ELEGANT MERRIWEATHER TYPOGRAPHY */
+    .word {
+      position: absolute;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 240px;
+      letter-spacing: -2px;
+      color: #fff;
+      text-shadow: 0 0 80px rgba(212,175,55,0.4);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .benefit {
+      position: absolute;
+      font-weight: 900;
+      font-size: 200px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 50px rgba(212,175,55,0.5);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .hero-type {
+      position: absolute;
+      font-weight: 900;
+      font-size: 380px; 
+      letter-spacing: 10px; 
+      background: linear-gradient(180deg, #fff 0%, var(--gold-light) 30%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 100px rgba(212,175,55,0.4);
+      opacity: 0; 
+      transform: scale(0.5);
+      will-change: transform, opacity;
+    }
+
+    /* LUXURY HUD PANEL */
+    .hud-panel {
+      position: absolute;
+      top: 60%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 800px; padding: 60px;
+      background: rgba(10, 8, 8, 0.6);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(183,110,121,0.3); 
+      border-radius: 40px;
+      z-index: 70; opacity: 0;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.9), inset 0 2px 0 rgba(255,255,255,0.1);
+      will-change: transform, opacity;
+    }
+
+    .hud-header {
+      font-weight: 300; font-style: italic; font-size: 40px; color: #fff; text-align: center; margin-bottom: 60px;
+      letter-spacing: 4px; text-transform: uppercase;
+    }
+
+    .hud-compare { display: flex; justify-content: space-between; gap: 60px; }
+    
+    .hud-stat { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .hud-stat span { font-weight: 700; font-size: 26px; color: #888; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 4px;}
+    
+    .hud-after span { color: var(--gold); text-shadow: 0 0 30px rgba(212,175,55,0.3); }
+
+    .hud-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-bottom: 40px; }
+    .hud-bar { height: 100%; width: 0%; border-radius: 4px; }
+    
+    .gray-bar { background: #444; }
+    .gold-bar { background: var(--gold); box-shadow: 0 0 30px var(--gold); }
+    
+    .hud-number { font-size: 110px; font-weight: 300; color: #fff; font-variant-numeric: tabular-nums; }
+    
+    .grain {
+      position: absolute; inset: 0; pointer-events: none; z-index: 100;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 4px 4px; 
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage" id="root" 
+       data-composition-id="aura-promo-v2"
+       data-width="1080" 
+       data-height="1920"
+       data-start="0"
+       data-duration="18">
+    
+    <!-- Background Assets -->
+    <div class="bg-wrapper" id="wrap-clip1" style="opacity: 1;">
+      <video autoplay loop muted playsinline class="bg-video" src="assets/clip1.mp4"></video>
+    </div>
+    
+    <div class="bg-wrapper" id="wrap-clip2">
+      <video autoplay loop muted playsinline class="bg-video" src="assets/clip2.mp4"></video>
+    </div>
+    
+    <!-- INFLUENCER SUPERPOSICION --->
+    <div class="influencer-pip-container" id="wrap-influencer">
+      <!-- Hyperframes contract: video without class='clip', GSAP controls the wrapper -->
+      <video autoplay loop muted playsinline src="assets/influencer.mp4"></video>
+    </div>
+    
+    <div class="vignette-lux"></div>
+    
+    <!-- HUD -->
+    <div class="hud-panel" id="hud">
+      <div class="hud-header">Hidratación</div>
+      <div class="hud-compare">
+        <div class="hud-stat hud-before">
+          <span>Otras</span>
+          <div class="hud-bar-bg"><div class="hud-bar gray-bar" id="bar-before"></div></div>
+          <div class="hud-number" id="num-before">0%</div>
+        </div>
+        <div class="hud-stat hud-after">
+          <span>Espíritu Dorado</span>
+          <div class="hud-bar-bg"><div class="hud-bar gold-bar" id="bar-after"></div></div>
+          <div class="hud-number" id="num-after">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Texts -->
+    <div class="text-layer">
+      <div class="word" id="w1">Tu piel</div>
+      <div class="word" id="w2">sufre.</div>
+      
+      <div class="benefit" id="b1">Hidrata</div>
+      <div class="benefit" id="b2">Restaura</div>
+      <div class="benefit" id="b3">Brilla</div>
+      
+      <!-- HERO HOLD ahora subirá ligeramente para dar protagonismo al marco de la modelo -->
+      <div class="hero-type" id="logo-hero" style="top: 15%;">AURA</div>
+    </div>
+
+    <div class="whip-streak" id="whip"></div>
+    <div class="grain"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // BACKGROUND VIDEOS ORCHESTRATION 
+    tl.fromTo('#wrap-clip1', { scale: 1 }, { scale: 1.15, duration: 8, ease: 'none' }, 0);
+    
+    // Crossfade to clip2 at 7.0s
+    tl.to('#wrap-clip1', { opacity: 0, duration: 1.0, ease: 'power2.inOut' }, 7.0);
+    tl.set('#wrap-clip2', { opacity: 1, scale: 1.1 }, 7.0);
+    tl.fromTo('#wrap-clip2', { filter: 'brightness(0)' }, { filter: 'brightness(1)', duration: 1.0, ease: 'power2.out' }, 7.0);
+    tl.to('#wrap-clip2', { scale: 1.0, duration: 11, ease: 'none' }, 7.0); 
+
+    // INFLUENCER OVERLAY (PiP) at 11.5s
+    tl.fromTo('#wrap-influencer', 
+      { opacity: 0, y: 150, scale: 0.85, filter: 'blur(20px)' }, 
+      { opacity: 1, y: 0, scale: 0.95, filter: 'blur(0px)', duration: 2.0, ease: 'power3.out' }, 
+      11.5
+    );
+    tl.to('#wrap-influencer', { scale: 1.0, duration: 6.5, ease: 'sine.inOut' }, 11.5);
+
+    // ===================================
+    // KINETIC TEXT ORCHESTRATION
+    // ===================================
+
+    // ACT 1: "Tu piel sufre"
+    tl.fromTo('#w1', { y: 150, opacity: 0, scale: 0.5 }, { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' }, 0.5)
+      .to('#w1', { opacity: 0, scale: 3, duration: 0.8, ease: 'power2.in' }, 1.8);
+      
+    tl.fromTo('#w2', { y: 150, opacity: 0, scale: 0.5 }, { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' }, 1.6)
+      .to('#w2', { opacity: 0, scale: 3, duration: 0.8, ease: 'power2.in' }, 2.6);
+
+    // ACT 2: WHIP-STREAK (Oro)
+    tl.fromTo('#whip', { x: -2000 }, { x: 2000, duration: 0.6, ease: 'power3.inOut' }, 3.0);
+
+    // ACT 3: BENEFICIOS RAPIDOS 
+    tl.fromTo('#b1', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' }, 4.0)
+      .to('#b1', { scale: 1.1, opacity: 0, duration: 0.3 }, 4.8);
+      
+    tl.fromTo('#b2', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' }, 5.0)
+      .to('#b2', { scale: 1.1, opacity: 0, duration: 0.3 }, 5.8);
+
+    tl.fromTo('#b3', { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' }, 6.0)
+      .to('#b3', { scale: 1.1, opacity: 0, duration: 0.3 }, 6.8);
+
+
+    // ACT 4: HUD PANEL
+    tl.fromTo('#hud', 
+      { y: 200, opacity: 0, scale: 0.9, filter: 'blur(10px)' }, 
+      { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out' }, 
+      7.5
+    );
+
+    const hudData = { before: 0, after: 0 };
+    tl.to(hudData, {
+      before: 26, after: 380, duration: 2.5, ease: 'power2.out',
+      onUpdate: () => {
+        document.getElementById('num-before').innerText = Math.round(hudData.before) + '%';
+        document.getElementById('num-after').innerText = Math.round(hudData.after) + '%';
+      }
+    }, 8.5);
+
+    tl.to('#bar-before', { width: '26%', duration: 2.5, ease: 'power2.out' }, 8.5);
+    tl.to('#bar-after', { width: '100%', duration: 2.5, ease: 'power2.out' }, 8.5);
+
+    tl.to('#hud', { opacity: 0, scale: 2.5, filter: 'blur(20px)', duration: 1.0, ease: 'power2.in' }, 11.5); 
+
+
+    // ACT 5: THE HERO HOLD 
+    tl.fromTo('#logo-hero', 
+      { scale: 0.2, opacity: 0, letterSpacing: '50px' }, 
+      { scale: 1, opacity: 1, letterSpacing: '10px', duration: 2.0, ease: 'power3.out' }, 
+      12.5
+    );
+
+    tl.to('#logo-hero', { textShadow: '0 0 160px rgba(212,175,55,0.6)', duration: 2.0, repeat: -1, yoyo: true, ease: 'sine.inOut' }, 14.5);
+
+    tl.to({}, { duration: 18 }, 0);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['aura-promo-v2'] = tl;
+
+    if (!window.location.search.includes('headless')) {
+      setTimeout(() => tl.play(), 500);
+    }
+  </script>
+</body>
+</html>
